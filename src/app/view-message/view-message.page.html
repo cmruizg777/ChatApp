@@ -1,29 +1,62 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button [text]="getBackButtonText()" defaultHref="/"></ion-back-button>
+      <ion-back-button [text]="getBackButtonText()" defaultHref="/home"></ion-back-button>
+      {{contactName}}
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" *ngIf="message">
-  <ion-item>
-    <ion-icon name="person-circle" color="primary"></ion-icon>
+<ion-content [fullscreen]="true" [scrollEvents]="true">
+  <ion-item *ngFor="let message of messages">
+    <ion-icon name="person-circle" [color]="message.entrante ? 'primary':'success'" [slot]=" message.entrante ? 'start':'start'"></ion-icon>
     <ion-label class="ion-text-wrap">
-      <h2>
-        {{ message.fromName }}
-        <span class="date">
-          <ion-note>{{ message.date }}</ion-note>
-        </span>
-      </h2>
-      <h3>To: <ion-note>Me</ion-note></h3>
+      <ion-row>
+        <ion-col>
+          <h2>
+            <ng-container *ngIf="message.entrante; else elseEntrante">
+              {{message.emisorUser.nombres + ' ' + message.emisorUser.apellidos}}
+            </ng-container>
+            <ng-template #elseEntrante>
+              Tú
+            </ng-template>
+          </h2>
+        </ion-col>
+        <ion-col>
+          <span class="date">
+            <ion-note>{{ message.fecha|date:'M-d-yy h:m'}}</ion-note>
+          </span>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <div class="ion-padding">
+            <p>
+              {{message.contenido}}
+            </p>
+          </div>
+        </ion-col>
+      </ion-row>
+
     </ion-label>
+
   </ion-item>
-  
-  <div class="ion-padding">
-    <h1>{{ message.subject }}</h1>
-    <p>
-      Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-    </p>
-  </div>
+
+
+
 </ion-content>
+<ion-footer>
+  <ion-toolbar>
+    <ion-row>
+      <ion-col size="9">
+        <ion-input placeholder="Escribe un mensaje" [(ngModel)]="newMessage.contenido"></ion-input>
+      </ion-col>
+      <ion-col size="3">
+        <ion-button color="success" (click)="enviarMensaje()">
+          Enviar
+        </ion-button>
+      </ion-col>
+    </ion-row>
+
+  </ion-toolbar>
+</ion-footer>
